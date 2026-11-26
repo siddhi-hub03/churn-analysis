@@ -10,7 +10,17 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-DATA_PATH = Path(__file__).parent / "data" / "European_Bank.csv"
+def _find_data() -> Path:
+    """Locate the CSV whether it sits in data/ or next to the code."""
+    here = Path(__file__).parent
+    for cand in (here / "data" / "European_Bank.csv", here / "European_Bank.csv"):
+        if cand.exists():
+            return cand
+    found = sorted(here.rglob("European_Bank*.csv"))
+    return found[0] if found else here / "data" / "European_Bank.csv"
+
+
+DATA_PATH = _find_data()
 
 AGE_BINS = [0, 29, 45, 60, 200]
 AGE_LABELS = ["<30", "30-45", "46-60", "60+"]
